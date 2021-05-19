@@ -4,42 +4,18 @@
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  */
-/*
- * Optional/repeated fields:
- * - optional fields are default in proto3, `required` fields have been removed.
- *
- * Updating A Message Type:
- * - https://developers.google.com/protocol-buffers/docs/proto3#updating
- * - Deprecated field annotations https://developers.google.com/protocol-buffers/docs/proto3#options
- *
- * Default values:
- * - see: https://developers.google.com/protocol-buffers/docs/proto3#default
- * - Scalar message fields, once parsed, cannot tell if a field was not set or set the the default value afterwards.
- * - Default values are not serialized on the wire.
- * - TODO: Keep this in mind when defining e.g. booleans, make sure you want that "default" `false` behavior on.
- *
- * Other types:
- * - "Oneof" if only one of many fields can be set / should be interpreted
- *   https://developers.google.com/protocol-buffers/docs/proto3#using_oneof
- *   Be careful with these fields: https://developers.google.com/protocol-buffers/docs/proto3#backwards-compatibility_issues
- * - Maps https://developers.google.com/protocol-buffers/docs/proto3#maps
- * - JSON Mapping https://developers.google.com/protocol-buffers/docs/proto3#json
- */
 syntax = "proto3";
 
 /*
- * Package naming convention used from the following example:
- * https://developers.google.com/protocol-buffers/docs/javatutorial#defining-your-protocol-format
  * More details on packages: https://developers.google.com/protocol-buffers/docs/proto3#packages
+ * And Style Guide Packges section: https://developers.google.com/protocol-buffers/docs/style#packages
  */
-package model;
+package de.cyface.protos.model;
 
 /*
- * More details on options: https://developers.google.com/protocol-buffers/docs/proto3#options
- */
-option java_package = "de.cyface.model.protos";
-/*
  * To generate own `.java` fils for the top level classes/enums.
+ *
+ * More details on options: https://developers.google.com/protocol-buffers/docs/proto3#options
  *
  * Import messages:
  * - In java you cannot import message types from other `.proto` files.
@@ -68,7 +44,7 @@ message Measurement {
    *
    * The current format of the binary format version is `2`
    */
-  uint32 formatVersion = 16;
+  uint32 format_version = 16;
 
   /*
    * Collection of geo-locations.
@@ -76,7 +52,7 @@ message Measurement {
    * We use a packed encoding here, so this is a non repeated field.
    * FIXME - do we?
    */
-  LocationRecords locationRecords = 17;
+  LocationRecords location_records = 17;
   /*
    * Collection of acceleration points.
    *
@@ -122,7 +98,7 @@ message Measurement {
    *
    * This field allows to attach this file which is usually a of FileType `CSV`.
    */
-  File capturingLog = 24;
+  File capturing_log = 24;
 }
 
 /*
@@ -407,7 +383,7 @@ message Event {
    *
    * The order of the enum definitions are equal to the order before the `protobuf` implementation.
    *
-   * The 1st element must be 0 (compatibily to proto2), thus, I added "UNKNOWN" as default value
+   * The 1st element must be 0. Following the Style Guide it's named enum_name_UNSPECIFIED.
    * For more details and options like "alias" see: https://developers.google.com/protocol-buffers/docs/proto3#enum
   */
   enum EventType {
@@ -417,7 +393,7 @@ message Event {
      * Our current events like lifecycle-button-presses or modality-type-changes only occur rarely
      * An example for high-frequent event types could be e.g. debugging/crash events
      */
-    UNKNOWN = 0; // Default value
+    EVENT_TYPE_UNSPECIFIED = 0; // Default value
     LIFECYCLE_START = 16;
     LIFECYCLE_STOP = 17;
     LIFECYCLE_RESUME = 18;
@@ -455,11 +431,11 @@ message File {
   /*
    * The type of the file represented by the binary data.
    *
-   * The 1st element must be 0 (compatibily to proto2), thus, I added "UNKNOWN" as default value
+   * The 1st element must be 0. Following the Style Guide it's named enum_name_UNSPECIFIED.
    * For more details and options like "alias" see: https://developers.google.com/protocol-buffers/docs/proto3#enum
    */
   enum FileType {
-    UNKNOWN = 0; // Default value
+    FILE_TYLE_UNSPECIFIED = 0; // Default value
     JPG = 1; // Compressed image, interpreted as images captured during the measurement, e.g. from Android
     DNG = 2; // Raw image, interpreted as images captured during the measurement, e.g. from Android
     MP4 = 3; // Video, interpreted as a video captured during the measurement, e.g. from Android
