@@ -1,3 +1,9 @@
+/*
+ * Copyright (C) 2021 Cyface GmbH - All Rights Reserved
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 package de.cyface.protos.model;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -34,10 +40,26 @@ public class MeasurementOrBuilderTest {
      * Number of bytes of a serialized measurement (1 Byte) which contains:
      * - the format version (2 Bytes)
      * - two locations without elevation (42 Bytes)
-     * - 2 Byte for the first, empty Elevation
+     * - 2+2 Byte for the first, empty Elevation (isNull=true)
      * - 2+4 Bytes for the second, absolute Elevation value
      */
-    private static final Integer SERIALIZED_SIZE_TWO_LOCATIONS_WITH_ONE_ELEVATION = 52;
+    private static final Integer SERIALIZED_SIZE_TWO_LOCATIONS_WITH_ONE_ELEVATION = 54;
+    /**
+     * Number of bytes of a serialized measurement (1 Byte) which contains:
+     * - the format version (2 Bytes)
+     * - first location without elevations (31 Bytes)
+     * - subsequent locations without elevations (+ 3599 * ~9.2 Bytes = ~33_110)
+     */
+    private static final int[] SERIALIZED_SIZE_RANGE_3600_LOCATIONS_WITHOUT_ELEVATIONS = new int[] {32_000, 34_000};
+    /**
+     * Number of bytes of a serialized measurement (1 Byte) which contains:
+     * - the format version (2 Bytes)
+     * - first location without elevations (31 Bytes)
+     * - subsequent locations without elevations (+ 3599 * ~9 Bytes = 33_110)
+     * - 2+4 Bytes for the first, absolute Elevation value (6 Bytes)
+     * - 2+2 Bytes for the second, relative Elevation value (+ 3599 * ~4.2 Bytes = ~15_115)
+     */
+    private static final int[] SERIALIZED_SIZE_RANGE_3600_LOCATIONS_WITH_ELEVATIONS = new int[] {48_000, 49_000};
 
     @Test
     void test_serializedSize_forEmptyMeasurement() throws InvalidProtocolBufferException {
@@ -50,7 +72,7 @@ public class MeasurementOrBuilderTest {
 
         // Assert
         assertThat(serialized.length, is(equalTo(SERIALIZED_SIZE_FORMAT_VERSION_ONLY)));
-        final Measurement deserialized = Measurement.parseFrom(serialized);
+        final var deserialized = Measurement.parseFrom(serialized);
         assertThat(deserialized.getFormatVersion(), is(equalTo(measurement.getFormatVersion())));
     }
 
@@ -76,7 +98,7 @@ public class MeasurementOrBuilderTest {
 
         // Assert
         assertThat(serialized.length, is(equalTo(SERIALIZED_SIZE_ONE_LOCATION_WITHOUT_ELEVATION)));
-        final Measurement deserialized = Measurement.parseFrom(serialized);
+        final var deserialized = Measurement.parseFrom(serialized);
         assertThat(deserialized.getFormatVersion(), is(equalTo(measurement.getFormatVersion())));
     }
 
@@ -107,8 +129,9 @@ public class MeasurementOrBuilderTest {
 
         // Assert
         assertThat(serialized.length, is(equalTo(SERIALIZED_SIZE_TWO_LOCATIONS_WITHOUT_ELEVATION)));
-        final Measurement deserialized = Measurement.parseFrom(serialized);
+        final var deserialized = Measurement.parseFrom(serialized);
         assertThat(deserialized.getFormatVersion(), is(equalTo(measurement.getFormatVersion())));
+        assertThat(deserialized.getLocationRecords().getElevationCount(), is(equalTo(0)));
     }
 
     @Test
@@ -126,8 +149,9 @@ public class MeasurementOrBuilderTest {
                 .addAccuracy(-300) // 5 m
                 .addSpeed(1000) // 10 m/s
                 .addSpeed(-1000) // 0 m/s
-                .addElevation(LocationRecords.Elevation.newBuilder().build()) // no elevation value
-                .addElevation(LocationRecords.Elevation.newBuilder().setValue(48000).build()) // 480 m
+                // (!) If no elevation is present for some locations only, always set `isNull` or else elevation is 0!
+                .addElevation(LocationRecords.Elevation.newBuilder().setIsNull(true).build()) // no elevation value
+                .addElevation(LocationRecords.Elevation.newBuilder().setValue(480_00).build()) // 480 m
                 .build();
         final var measurement = Measurement.newBuilder()
                 .setFormatVersion(2)
@@ -140,35 +164,52 @@ public class MeasurementOrBuilderTest {
 
         // Assert
         assertThat(serialized.length, is(equalTo(SERIALIZED_SIZE_TWO_LOCATIONS_WITH_ONE_ELEVATION)));
-        final Measurement deserialized = Measurement.parseFrom(serialized);
+        final var deserialized = Measurement.parseFrom(serialized);
         assertThat(deserialized.getFormatVersion(), is(equalTo(measurement.getFormatVersion())));
+        assertThat(deserialized.getLocationRecords().getElevationCount(), is(equalTo(2)));
+        assertThat(deserialized.getLocationRecords().getElevation(0).getIsNull(), is(equalTo(true)));
+        assertThat(deserialized.getLocationRecords().getElevation(1).getIsNull(), is(equalTo(false)));
+        assertThat(deserialized.getLocationRecords().getElevation(1).getValue(), is(equalTo(480_00)));
     }
 
     @Test
     void test_serializedSize_one3600Locations() throws InvalidProtocolBufferException {
         // Arrange
-        final var locations = generateLocations(3600, false);
-        final var measurement = Measurement.newBuilder()
+        final var locationsWithoutElevations = generateLocations(3600, false);
+        final var locationsWithElevations = generateLocations(3600, true);
+        final var measurementWithoutElevations = Measurement.newBuilder()
                 .setFormatVersion(2)
-                .setLocationRecords(locations)
+                .setLocationRecords(locationsWithoutElevations)
                 .build();
-        Validate.isTrue(measurement.isInitialized());
+        final var measurementWithElevations = Measurement.newBuilder()
+                .setFormatVersion(2)
+                .setLocationRecords(locationsWithElevations)
+                .build();
+        Validate.isTrue(measurementWithoutElevations.isInitialized());
+        Validate.isTrue(measurementWithElevations.isInitialized());
 
         // Act
-        final var serialized = measurement.toByteArray();
+        final var serializedWithoutElevations = measurementWithoutElevations.toByteArray();
+        final var serializedWithElevations = measurementWithElevations.toByteArray();
 
         // Assert (byte range tested with 100.000 random generated measurements)
-        assertThat(serialized.length, is(greaterThan(32_000))); // with elevations: ~48_000
-        assertThat(serialized.length, is(lessThan(34_000))); // with elevations: ~49_000
-        final Measurement deserialized = Measurement.parseFrom(serialized);
-        assertThat(deserialized.getFormatVersion(), is(equalTo(measurement.getFormatVersion())));
+        assertThat(serializedWithoutElevations.length,
+                is(greaterThan(SERIALIZED_SIZE_RANGE_3600_LOCATIONS_WITHOUT_ELEVATIONS[0])));
+        assertThat(serializedWithoutElevations.length,
+                is(lessThan(SERIALIZED_SIZE_RANGE_3600_LOCATIONS_WITHOUT_ELEVATIONS[1])));
+        assertThat(serializedWithElevations.length,
+                is(greaterThan(SERIALIZED_SIZE_RANGE_3600_LOCATIONS_WITH_ELEVATIONS[0])));
+        assertThat(serializedWithElevations.length,
+                is(lessThan(SERIALIZED_SIZE_RANGE_3600_LOCATIONS_WITH_ELEVATIONS[1])));
+        final var deserialized = Measurement.parseFrom(serializedWithoutElevations);
+        assertThat(deserialized.getFormatVersion(), is(equalTo(measurementWithoutElevations.getFormatVersion())));
     }
 
     @SuppressWarnings("SameParameterValue")
     private LocationRecords generateLocations(@SuppressWarnings("SameParameterValue") final int amount,
             final boolean withElevations) {
         final var builder = LocationRecords.newBuilder();
-        for (int i = 0; i < amount; i++) {
+        for (var i = 0; i < amount; i++) {
             if (i == 0) {
                 // noinspection SpellCheckingInspection
                 builder.addTimestamp(1621582427000L)
@@ -180,8 +221,8 @@ public class MeasurementOrBuilderTest {
                     builder.addElevation(LocationRecords.Elevation.newBuilder().setValue(48000).build()); // 480 m
                 }
             } else {
-                final int random = (int)(Math.random() * 20);
-                final int randomPlusMinus = random - 10;
+                final var random = (int)(Math.random() * 20);
+                final var randomPlusMinus = random - 10;
                 builder.addTimestamp(1000L) // 1 second later
                         .addLatitude(randomPlusMinus * 10)
                         .addLongitude(randomPlusMinus * 100)

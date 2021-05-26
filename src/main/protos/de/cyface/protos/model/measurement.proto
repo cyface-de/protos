@@ -165,7 +165,7 @@ message LocationRecords {
   /*
    * The encoding should look like the following:
    * - E 1 48000 E 1 100 E 1 -50 (scenario where all locations have elevations)
-   * - E 1 48000 E       E 1 100 (scenario where some locations have elevations)
+   * - E 1 48000 E 2 1   E 1 100 (scenario where some locations have elevations)
    * - 0 bytes                   (scenario without elevations)
    */
   message Elevation {
@@ -183,9 +183,12 @@ message LocationRecords {
      */  
     sint32 value = 1;
 
-    // Choose the boolean so that "default" = `false` means `no value` because then, if no value, it's encoded this way: `E E E`
-    // Or even simpler: Just have the optional "value" field => has the same effect - or not? Test this!
-    // boolean isNull = 2;
+    /*
+     * This field is only encoded if no `value` is set (i.e. elevation `is_null`).
+     *
+     * We cannot just have the optional "value" field as we can't differentiate between default value (0) and unset (0)
+     */
+    bool is_null = 2;
   }
 
   /*
