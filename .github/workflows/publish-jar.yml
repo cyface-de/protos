@@ -23,6 +23,7 @@ jobs:
 
       - name: Compile java files from `proto` file
         run: |
+          mkdir -p src/main/java
           ./protoc --java_out=./src/main/java/ src/main/protos/de/cyface/protos/model/measurement.proto
 
       # Publish slim JARS to Github Package Registry
