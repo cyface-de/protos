@@ -29,12 +29,12 @@ buildscript {
 
 plugins {
   id 'java'
-  id 'application'
+  id 'java-library'
   id 'eclipse'
   id 'idea'
   id 'maven-publish'
   //noinspection SpellCheckingInspection
-  id 'com.github.johnrengelman.shadow' version '6.1.0' apply false
+  id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
 group = 'de.cyface'
@@ -109,4 +109,14 @@ publishing {
       url = "file://${rootProject.buildDir}/repo"
     }
   }
+
+  publications {
+    //noinspection GroovyAssignabilityCheck
+    publishExecutable(MavenPublication) {
+      //noinspection GroovyAssignabilityCheckssssssss
+      from components.java
+    }
+  }
 }
+
+shadowJar {}
