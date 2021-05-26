@@ -56,6 +56,12 @@ However, the pre-compiled `JARs` are also published to the link:https://github.c
 - how to use with link:https://github.com/protocolbuffers/protobuf/tree/master/java#gradle[Gradle]
 - how to use with link:https://github.com/protocolbuffers/protobuf/tree/master/java#use-java-protocol-buffers-on-android[Android]
 
+    Instead of using the pre-compiled `java` classes (published `JAR`s) it's recommended to use `javalite` for Android. These classes can either be manually generated with:
+
+    protoc --java_out=lite:./src/main/java/ src/main/protos/de/cyface/protos/model/measurement.proto
+
+Or you can download the `proto` link:protoc --java_out=./src/main/java/ src/main/protos/de/cyface/protos/model/measurement.proto[files] from this repository and then generate the classes using the link:https://github.com/google/protobuf-gradle-plugin[Gradle Plugin]. This is done in the link:https://github.com/cyface-de/android-backend[Cyface Android SDK] - check it out if you need an example.
+
 The serializers encode the data in an efficient way, the decision process is documented link:https://cyface.atlassian.net/wiki/spaces/IM/pages/1535148033/Datenformat+bertragungsprotokoll+2021[internally].
 
 
