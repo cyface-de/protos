@@ -1,0 +1,112 @@
+/*
+ * Copyright 2021 Cyface GmbH
+ *
+ * This file is part of the Cyface Protocol Buffer Messages.
+ *
+ *  The Cyface Protocol Buffer Messages is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  The Cyface Protocol Buffer Messages is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with the Cyface Protocol Buffer Messages.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/**
+ * The root build gradle file.
+ *
+ * @author Armin Schnabel
+ */
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+}
+
+plugins {
+  id 'java'
+  id 'application'
+  id 'eclipse'
+  id 'idea'
+  id 'maven-publish'
+  //noinspection SpellCheckingInspection
+  id 'com.github.johnrengelman.shadow' version '6.1.0' apply false
+}
+
+group = 'de.cyface'
+version = '0.0.0'
+
+tasks.withType(JavaCompile) {
+  options.encoding = 'UTF-8'
+
+  sourceCompatibility = JavaVersion.VERSION_11
+  targetCompatibility = JavaVersion.VERSION_11
+}
+
+ext {
+  commonsLangVersion = '3.8.1'
+  gradleWrapperVersion = '6.8.3'
+  protobufVersion = '3.17.0'
+
+  // Versions of testing dependencies
+  junitVersion = '5.7.0'
+  mockitoVersion = '3.3.3'
+  hamcrestVersion = '2.2'
+  flapdoodleVersion = '3.0.0'
+}
+
+wrapper {
+  gradleVersion = "$gradleWrapperVersion"
+}
+
+repositories {
+  mavenCentral()
+}
+
+// Code Quality Checker
+dependencies {
+  // Protobuf generated java files
+  implementation "com.google.protobuf:protobuf-java:$protobufVersion"
+
+  // Utility
+  implementation "org.apache.commons:commons-lang3:$commonsLangVersion" // Using Validate
+
+  // Testing Dependencies
+  testImplementation(platform("org.junit:junit-bom:$junitVersion"))
+  testImplementation "org.junit.jupiter:junit-jupiter-api"
+  //testImplementation "org.junit.jupiter:junit-jupiter-params"  // Required for parameterized tests
+  testImplementation "org.hamcrest:hamcrest:$hamcrestVersion"
+  testImplementation "org.mockito:mockito-core:$mockitoVersion"
+  testImplementation "org.mockito:mockito-junit-jupiter:$mockitoVersion"
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+}
+
+test {
+  useJUnitPlatform()
+  testLogging {
+    events "passed", "skipped", "failed"
+  }
+}
+
+// Definitions for the maven-publish Plugin
+publishing {
+  // The following repositories are used to publish artifacts to.
+  repositories {
+    maven {
+      name = 'github'
+      url = uri("https://maven.pkg.github.com/cyface-de/protos")
+      credentials {
+        username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+        password = project.findProperty("gpr.key") ?: System.getenv("PASSWORD")
+      }
+    }
+    maven {
+      name = 'local'
+      url = "file://${rootProject.buildDir}/repo"
+    }
+  }
+}
