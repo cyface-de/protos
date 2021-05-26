@@ -50,7 +50,6 @@ message Measurement {
    * Collection of geo-locations.
    *
    * We use a packed encoding here, so this is a non repeated field.
-   * FIXME - do we?
    */
   LocationRecords location_records = 17;
   /*
@@ -107,9 +106,6 @@ message Measurement {
  * Each field contains the ordered list of that attribute for all points.
  * I.e. field1[4] and field2[4] belong to the same point.
  *
- *
- * FIXME <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< See updated calculations, I think I now prefer the `repeated LocationRecord` variant.
- *
  * Reason why we don't use `repeated LocationRecord` (and the same for sensor data):
  * - In proto3 repeated fields use the "packed" encoding by default.
  *   A field with 0 elements is not appearing in the message.
@@ -117,12 +113,12 @@ message Measurement {
  *   Fields with non-primitive types (like `LocationRecord` would be) encode the `key` for each repetition of `LocationRecord`.
  *   Example: LR KV KV, LR KV ... with LR = field number of LocationRecord and KV is a key-value pair inside this record.
  *   i.e.: LocationRecord{ts=1234567890123,lat=51012345,lon=13012345}, LocationRecord{ts=1000,lat=34,lon=54}
- *   Bytes: (LR 1B*n + ts 1B+4B+(n-1)*1B + lat 1B+4B+(n-1)*1B + lon 1B+4B+(n-1)*1B + accuracy + speed + elevation) ... n=3600 => 21_620 - 25_224 B (depending on #elevations)
+ *   Bytes: 56-66 KiB (without/with elevations) for a measurement with 3600 Locations (and no sensor data)
  * - We use a more efficient way: One LR-entry with multiple primitive `packed` fields.
  *   Example: LR K V V V V V K V V V V V, i.e. we only have to encode the type "LocationRecord" once not for each record.
  *   i.e: LocationRecords { ts=[1234567890123,1000,1000], lat=[51012345,34,35], lon=[13012345,54,55]}
- *   Bytes: LR 1B + (ts 1B+4B + lat 1B+4B + lon 1B+4B + accuracy + speed) + (n-1) * (ts 1B + lat 1B + lon 1B + accuracy + speed) ... n=3600 => 18_021 - 28_821 B (depending on #elevations)
- * - (!) In our annotation each LR must have a ts/lat/lon/speed/accuracy or else this does not work
+ *   Bytes: 32-49 KiB (without/with elevations) for a measurement with 3600 Locations (and no sensor data)
+ * - In this annotation each LR must have a ts/lat/lon/speed/accuracy or else this does not work.
  *   Only for `elevation` we define a `Elevation` message type which can also have no value and would encoded: `E E KV` or `E KV E KV`
  */
 message LocationRecords {
