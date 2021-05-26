@@ -14,18 +14,6 @@ jobs:
         with:
           java-version: 11
 
-      - name: Download & unzip protoc
-        run: |
-          wget https://github.com/protocolbuffers/protobuf/releases/download/v3.17.0/protoc-3.17.0-linux-x86_64.zip \
-            -O protoc-3.zip
-          unzip protoc-3.zip -d protoc-3
-          mv protoc-3/bin/protoc protoc
-
-      - name: Compile java files from `proto` file
-        run: |
-          mkdir -p src/main/java
-          ./protoc --java_out=./src/main/java/ src/main/protos/de/cyface/protos/model/measurement.proto
-
       # Publish slim JARS to Github Package Registry
       - name: Publish package
         run: ./gradlew publish
