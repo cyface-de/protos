@@ -39,7 +39,7 @@ plugins {
 }
 
 group = 'de.cyface'
-version = '0.0.1'
+version = '0.0.2'
 
 tasks.withType(JavaCompile) {
   options.encoding = 'UTF-8'
