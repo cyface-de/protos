@@ -35,10 +35,11 @@ plugins {
   id 'maven-publish'
   //noinspection SpellCheckingInspection
   id 'com.github.johnrengelman.shadow' version '6.1.0'
+  id 'com.google.protobuf' version '0.8.16'
 }
 
 group = 'de.cyface'
-version = '0.0.1'
+version = '0.0.2'
 
 tasks.withType(JavaCompile) {
   options.encoding = 'UTF-8'
@@ -69,7 +70,7 @@ repositories {
 
 // Code Quality Checker
 dependencies {
-  // Protobuf generated java files
+  // Generate java files from the Protobuf files
   implementation "com.google.protobuf:protobuf-java:$protobufVersion"
 
   // Utility
@@ -83,6 +84,21 @@ dependencies {
   testImplementation "org.mockito:mockito-core:$mockitoVersion"
   testImplementation "org.mockito:mockito-junit-jupiter:$mockitoVersion"
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+}
+
+// See https://github.com/google/protobuf-gradle-plugin
+protobuf {
+  protoc {
+    artifact = "com.google.protobuf:protoc:$protobufVersion"
+  }
+  generateProtoTasks {
+    //noinspection GroovyAssignabilityCheck
+    all().each { task ->
+      task.builtins {
+        java {}
+      }
+    }
+  }
 }
 
 test {
@@ -113,7 +129,7 @@ publishing {
   publications {
     //noinspection GroovyAssignabilityCheck
     publishExecutable(MavenPublication) {
-      //noinspection GroovyAssignabilityCheckssssssss
+      //noinspection GroovyAssignabilityCheck
       from components.java
     }
   }
