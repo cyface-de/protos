@@ -39,7 +39,7 @@ plugins {
 }
 
 group = 'de.cyface'
-version = '0.0.1'
+version = '0.0.2'
 
 tasks.withType(JavaCompile) {
   options.encoding = 'UTF-8'
@@ -70,7 +70,7 @@ repositories {
 
 // Code Quality Checker
 dependencies {
-  // Protobuf generated java files
+  // Generate java files from the Protobuf files
   implementation "com.google.protobuf:protobuf-java:$protobufVersion"
 
   // Utility
