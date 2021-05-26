@@ -24,6 +24,8 @@ Reminders from the documentation which need to be considered for future updates:
 
  - link:https://developers.google.com/protocol-buffers/docs/proto3#updating[Updating A Message Type]
 
+ - link:https://developers.google.com/protocol-buffers/docs/javatutorial#extending-a-protocol-buffer[Extending a Protocol Buffer]
+
  - Deprecated field link:https://developers.google.com/protocol-buffers/docs/proto3#options[annotations]
 
  - link:https://developers.google.com/protocol-buffers/docs/proto3#default[Default values]
@@ -38,6 +40,7 @@ Other message types:
  - link:https://developers.google.com/protocol-buffers/docs/proto3#maps[Maps]
  - link:https://developers.google.com/protocol-buffers/docs/proto3#json[JSON Mapping]
  - There are also "well known" message types from Google, e.g. for `JSON`
+ - link:https://developers.google.com/protocol-buffers/docs/javatutorial#advanced-usage[Reflections]
 
 
 == Compiling the Message Definitions

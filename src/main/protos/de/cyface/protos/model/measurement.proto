@@ -8,12 +8,12 @@ syntax = "proto3";
 
 /*
  * More details on packages: https://developers.google.com/protocol-buffers/docs/proto3#packages
- * And Style Guide Packges section: https://developers.google.com/protocol-buffers/docs/style#packages
+ * And Style Guide Packages section: https://developers.google.com/protocol-buffers/docs/style#packages
  */
 package de.cyface.protos.model;
 
 /*
- * To generate own `.java` fils for the top level classes/enums.
+ * To generate own `.java` files for the top level classes/enums.
  *
  * More details on options: https://developers.google.com/protocol-buffers/docs/proto3#options
  *
@@ -119,10 +119,10 @@ message Measurement {
  *   i.e.: LocationRecord{ts=1234567890123,lat=51012345,lon=13012345}, LocationRecord{ts=1000,lat=34,lon=54}
  *   Bytes: (LR 1B*n + ts 1B+4B+(n-1)*1B + lat 1B+4B+(n-1)*1B + lon 1B+4B+(n-1)*1B + accuracy + speed + elevation) ... n=3600 => 21_620 - 25_224 B (depending on #elevations)
  * - We use a more efficient way: One LR-entry with multiple primitive `packed` fields.
- *   Example: LR KVVVVV KVVVVV, i.e. we only have to encode the type "LocationRecord" once not for each record.
+ *   Example: LR K V V V V V K V V V V V, i.e. we only have to encode the type "LocationRecord" once not for each record.
  *   i.e: LocationRecords { ts=[1234567890123,1000,1000], lat=[51012345,34,35], lon=[13012345,54,55]}
  *   Bytes: LR 1B + (ts 1B+4B + lat 1B+4B + lon 1B+4B + accuracy + speed) + (n-1) * (ts 1B + lat 1B + lon 1B + accuracy + speed) ... n=3600 => 18_021 - 28_821 B (depending on #elevations)
- * - (!) In our annotatoin each LR must have a ts/lat/lon/speed/accuracy or else this does not work
+ * - (!) In our annotation each LR must have a ts/lat/lon/speed/accuracy or else this does not work
  *   Only for `elevation` we define a `Elevation` message type which can also have no value and would encoded: `E E KV` or `E KV E KV`
  */
 message LocationRecords {
@@ -183,7 +183,7 @@ message LocationRecords {
      * 480.0m, 481.0m, 480.5m => 48000 cm, 100cm, -50cm
      * This encodes the data more efficiently, as the `varint` encoding is used.
      *
-     * Elvation in cm above sea level, which can also be negative (as absolute number, beside the diff-annotation used here)
+     * Elevation in cm above sea level, which can also be negative (as absolute number, beside the diff-annotation used here)
      */  
     sint32 value = 1;
 
@@ -203,7 +203,7 @@ message LocationRecords {
    *
    * Accuracy in cm. Can not be smaller than 0 (as absolute number, beside the diff-annotation used here).
    *
-   * The likelyhood of that accuracy to be correct is not stored as not all platforms provide this or provide this in different format.
+   * The likelihood of that accuracy to be correct is not stored as not all platforms provide this or provide this in different format.
    * For some platform this is static, i.e. we can retrieve this information from the osVersion/osType field.
    */
   repeated sint32 accuracy = 5;
@@ -212,20 +212,20 @@ message LocationRecords {
    * Using `sint32` as the speed can as likely decrease as increase - using the diff/offset format here.
    * Negative numbers are encoded more efficiently in this data type, compared to `int32`.
    * `32bit`, i.e. we support a diff value up to ~2*10^9 cm/s which is ~ 20.000 km/s.
-   * As we capture the speed relative to the earth's rotation, we should be covering all manned aircrafts, but not spacecrafts.
+   * As we capture the speed relative to the earth's rotation, we should be covering all manned aircraft, but not spacecrafts.
    *
    * The speed is encoded in the offset/diff format, e.g.:
    * 10.0m/s, 11.0m, 10.5m => 1000 cm/s, 100cm, -50cm
    * This encodes the data more efficiently, as the `varint` encoding is used.
    *
    * Speed in cm/s. Should not be smaller than 0 (as absolute number, beside the diff-annotation used here),
-   * but we saw on some plattforms (Samsung/Android?) that negative speed is recorded, but this does not break this format.
+   * but we saw on some platforms (Samsung/Android?) that negative speed is recorded, but this does not break this format.
    */
   repeated sint32 speed = 6;
 }
 
 /*
- * A message type which wraps all acceration points captured for one measurement.
+ * A message type which wraps all acceleration points captured for one measurement.
  *
  * Each field contains the ordered list of that attribute for all points.
  * I.e. field1[4] and field2[4] belong to the same point.
@@ -352,9 +352,9 @@ message Directions {
  * A message type which wraps data of one event captured, such as the `start` lifecycle event or a `modality change`.
  *
  * We store each event separately we don't expect different event types to contain all fields.
- * Fields like `timestamp`, `type` and `value` use a 1 Byte field number (1-15) as this field probably occurrs in most events.
+ * Fields like `timestamp`, `type` and `value` use a 1 Byte field number (1-15) as this field probably occurs in most events.
  *
- * If we do increate the frequency later on, we should also change the field number of `Measurement.events` to a 1 Byte number.
+ * If we do increase the frequency later on, we should also change the field number of `Measurement.events` to a 1 Byte number.
  */
 message Event {
   /*
@@ -374,7 +374,7 @@ message Event {
    *
    * E.g.: the new value after a `MODALITY_TYPE_CHANGE` such as `BICYCLE`.
    * 
-   * Protobug `strings` must always contain UTF-8 encoded (or 7-bit ASCIII text), and cannot be longer than 2^32.
+   * Protobuf `strings` must always contain UTF-8 encoded (or 7-bit ASCII text), and cannot be longer than 2^32.
    */
   string value = 3;
 
@@ -435,10 +435,10 @@ message File {
    * For more details and options like "alias" see: https://developers.google.com/protocol-buffers/docs/proto3#enum
    */
   enum FileType {
-    FILE_TYLE_UNSPECIFIED = 0; // Default value
+    FILE_TYPE_UNSPECIFIED = 0; // Default value
     JPG = 1; // Compressed image, interpreted as images captured during the measurement, e.g. from Android
     DNG = 2; // Raw image, interpreted as images captured during the measurement, e.g. from Android
     MP4 = 3; // Video, interpreted as a video captured during the measurement, e.g. from Android
-    CSV = 4; // CSV used e.g. to protocoll the image capturing on Android
+    CSV = 4; // CSV used e.g. to protocol the image capturing on Android
   }
 }
