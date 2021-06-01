@@ -20,6 +20,8 @@
  * The root build gradle file.
  *
  * @author Armin Schnabel
+ * @version 1.0.0
+ * @since 1.0.0
  */
 buildscript {
   repositories {
@@ -28,7 +30,6 @@ buildscript {
 }
 
 plugins {
-  id 'java'
   id 'java-library'
   id 'eclipse'
   id 'idea'
