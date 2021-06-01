@@ -50,7 +50,7 @@ tasks.withType(JavaCompile) {
 }
 
 ext {
-  commonsLangVersion = '3.8.1'
+  commonsLangVersion = '3.12.0'
   gradleWrapperVersion = '6.8.3'
   protobufVersion = '3.17.0'
 
