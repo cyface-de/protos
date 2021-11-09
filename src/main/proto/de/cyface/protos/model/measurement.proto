@@ -57,23 +57,23 @@ message Measurement {
    */
   LocationRecords location_records = 17;
   /*
-   * Collection of acceleration points.
+   * Collection of acceleration point batches.
    *
-   * We use a packed encoding here, so this is a non repeated field.
+   * The sensor points are stored in batches to simplify the client code.
    */
-  Accelerations accelerations = 18;
+  repeated Accelerations accelerations = 18;
   /*
-   * Collection of rotation points.
+   * Collection of rotation point batches.
    *
-   * We use a packed encoding here, so this is a non repeated field.
+   * The sensor points are stored in batches to simplify the client code.
    */
-  Rotations rotations = 19;
+  repeated Rotations rotations = 19;
   /*
-   * Collection of direction points.
+   * Collection of direction point batches.
    *
-   * We use a packed encoding here, so this is a non repeated field.
+   * The sensor points are stored in batches to simplify the client code.
    */
-  Directions directions = 20;
+  repeated Directions directions = 20;
 
   /*
    * Collection of events.
@@ -279,10 +279,12 @@ message LocationRecords {
 }
 
 /*
- * A message type which wraps all acceleration points captured for one measurement.
+ * A message type which wraps a batch of acceleration points captured for one measurement.
  *
  * Each field contains the ordered list of that attribute for all points.
  * I.e. field1[4] and field2[4] belong to the same point.
+ *
+ * The first point is stored as absolute number, subsequent points in the offset-format to reduce the byte size.
  *
  * Reference phone, Pixel 3a, contains this sensor: https://www.bosch-sensortec.com/products/motion-sensors/imus/bmi160/
  * - Bosch recommends the following sensor: https://www.bosch-sensortec.com/products/motion-sensors/imus/bmi270/
@@ -345,10 +347,12 @@ message Accelerations {
 }
 
 /*
- * A message type which wraps all rotation points captured for one measurement.
+ * A message type which wraps a batch of rotation points captured for one measurement.
  *
  * Each field contains the ordered list of that attribute for all points.
  * I.e. field1[4] and field2[4] belong to the same point.
+ *
+ * The first point is stored as absolute number, subsequent points in the offset-format to reduce the byte size.
  *
  * Reference phone, Pixel 3a, contains this sensor: https://www.bosch-sensortec.com/products/motion-sensors/imus/bmi160/
  * - Bosch recommends the following sensor: https://www.bosch-sensortec.com/products/motion-sensors/imus/bmi270/
@@ -412,10 +416,12 @@ message Rotations {
 }
 
 /*
- * A message type which wraps all direction points captured for one measurement.
+ * A message type which wraps a batch of direction points captured for one measurement.
  *
  * Each field contains the ordered list of that attribute for all points.
  * I.e. field1[4] and field2[4] belong to the same point.
+ *
+ * The first point is stored as absolute number, subsequent points in the offset-format to reduce the byte size.
  *
  * Reference phone, Pixel 3a, contains this sensor: akm, AK0991X Magnetometer, Version 20012 (no good data sheet found)
  * - Another phones use https://www.digikey.de/catalog/en/partgroup/ak09915/65408, with 1/16 resolution (same as e.g. Tinkerforge)
