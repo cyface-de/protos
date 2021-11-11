@@ -56,24 +56,19 @@ message Measurement {
    * We use a packed encoding here, so this is a non repeated field.
    */
   LocationRecords location_records = 17;
+
   /*
-   * Collection of acceleration point batches.
-   *
-   * The sensor points are stored in batches to simplify the client code.
+   * Acceleration data stored during capturing.
    */
-  repeated Accelerations accelerations = 18;
+  AccelerationsFile accelerations_file = 18;
   /*
-   * Collection of rotation point batches.
-   *
-   * The sensor points are stored in batches to simplify the client code.
+   * Rotation data stored during capturing.
    */
-  repeated Rotations rotations = 19;
+  RotationsFile rotations_file = 19;
   /*
-   * Collection of direction point batches.
-   *
-   * The sensor points are stored in batches to simplify the client code.
+   * Direction data stored during capturing.
    */
-  repeated Directions directions = 20;
+  DirectionsFile directions_file = 20;
 
   /*
    * Collection of events.
@@ -121,17 +116,17 @@ message MeasurementBytes {
    */
   LocationRecords location_records = 17;
   /*
-   * Collection of acceleration points.
+   * Acceleration data stored during capturing.
    */
-  bytes accelerations = 18;
+  bytes accelerations_file = 18;
   /*
-   * Collection of rotation points.
+   * Rotation data stored during capturing.
    */
-  bytes rotations = 19;
+  bytes rotations_file = 19;
   /*
-   * Collection of direction points.
+   * Direction data stored during capturing.
    */
-  bytes directions = 20;
+  bytes directions_file = 20;
   /*
    * Collection of events.
    */
@@ -148,6 +143,48 @@ message MeasurementBytes {
    * This field allows to attach this file which is usually a of FileType `CSV`.
    */
   File capturing_log = 24;
+}
+
+/*
+ * A message type which wraps the `Accelerations` batches captured in a `cyfa` file of a measurement.
+ *
+ * This allows to inject the bytes from a `cyfa` file on the client without parsing the data [DAT-642].
+ */
+message AccelerationsFile {
+  /*
+   * Collection of acceleration point batches.
+   *
+   * The sensor points are stored in batches to simplify the client code.
+   */
+  repeated Accelerations accelerations = 1;
+}
+
+/*
+ * A message type which wraps the `Accelerations` batches captured in a `cyfa` file of a measurement.
+ *
+ * This allows to inject the bytes from a `cyfa` file on the client without parsing the data [DAT-642].
+ */
+message RotationsFile {
+  /*
+   * Collection of rotation point batches.
+   *
+   * The sensor points are stored in batches to simplify the client code.
+   */
+  repeated Rotations rotations = 1;
+}
+
+/*
+ * A message type which wraps the `Accelerations` batches captured in a `cyfa` file of a measurement.
+ *
+ * This allows to inject the bytes from a `cyfa` file on the client without parsing the data [DAT-642].
+ */
+message DirectionsFile {
+  /*
+   * Collection of direction point batches.
+   *
+   * The sensor points are stored in batches to simplify the client code.
+   */
+  repeated Directions directions = 1;
 }
 
 /*
