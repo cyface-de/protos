@@ -60,15 +60,15 @@ message Measurement {
   /*
    * Acceleration data stored during capturing.
    */
-  AccelerationsFile accelerations_file = 18;
+  AccelerationsBinary accelerations_binary = 18;
   /*
    * Rotation data stored during capturing.
    */
-  RotationsFile rotations_file = 19;
+  RotationsBinary rotations_binary = 19;
   /*
    * Direction data stored during capturing.
    */
-  DirectionsFile directions_file = 20;
+  DirectionsBinary directions_binary = 20;
 
   /*
    * Collection of events.
@@ -118,15 +118,15 @@ message MeasurementBytes {
   /*
    * Acceleration data stored during capturing.
    */
-  bytes accelerations_file = 18;
+  bytes accelerations_binary = 18;
   /*
    * Rotation data stored during capturing.
    */
-  bytes rotations_file = 19;
+  bytes rotations_binary = 19;
   /*
    * Direction data stored during capturing.
    */
-  bytes directions_file = 20;
+  bytes directions_binary = 20;
   /*
    * Collection of events.
    */
@@ -150,7 +150,7 @@ message MeasurementBytes {
  *
  * This allows to inject the bytes from a `cyfa` file on the client without parsing the data [DAT-642].
  */
-message AccelerationsFile {
+message AccelerationsBinary {
   /*
    * Collection of acceleration point batches.
    *
@@ -164,7 +164,7 @@ message AccelerationsFile {
  *
  * This allows to inject the bytes from a `cyfa` file on the client without parsing the data [DAT-642].
  */
-message RotationsFile {
+message RotationsBinary {
   /*
    * Collection of rotation point batches.
    *
@@ -178,7 +178,7 @@ message RotationsFile {
  *
  * This allows to inject the bytes from a `cyfa` file on the client without parsing the data [DAT-642].
  */
-message DirectionsFile {
+message DirectionsBinary {
   /*
    * Collection of direction point batches.
    *
