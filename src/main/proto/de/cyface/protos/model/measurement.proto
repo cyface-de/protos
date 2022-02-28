@@ -344,7 +344,7 @@ message Accelerations {
 
   /*
    * Acceleration value of one axis in mm/s^2, in the offset/diff format. E.g.:
-   * Absolute numbers: -9, 359, -4_820 => Offset-format: -9, +359, -5_179
+   * Absolute numbers: -9, 359, -4_820 => Offset-format: -9, +368, -5_179
    *
    * The offset/diff format encodes the data more efficiently, as the `varint` encoding is used.
    *
@@ -357,7 +357,7 @@ message Accelerations {
   repeated sint32 x = 2;
   /*
    * Acceleration value of one axis in mm/s^2, in the offset/diff format. E.g.:
-   * Absolute numbers: -9, 359, -4_820 => Offset-format: -9, +359, -5_179
+   * Absolute numbers: -9, 359, -4_820 => Offset-format: -9, +368, -5_179
    *
    * The offset/diff format encodes the data more efficiently, as the `varint` encoding is used.
    *
@@ -370,7 +370,7 @@ message Accelerations {
   repeated sint32 y = 3;
   /*
    * Acceleration value of one axis in mm/s^2, in the offset/diff format. E.g.:
-   * Absolute numbers: -9, 359, -4_820 => Offset-format: -9, +359, -5_179
+   * Absolute numbers: -9, 359, -4_820 => Offset-format: -9, +368, -5_179
    *
    * The offset/diff format encodes the data more efficiently, as the `varint` encoding is used.
    *
