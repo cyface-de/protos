@@ -211,6 +211,7 @@ message DirectionsBinary {
 message LocationRecords {
   /*
    * A Unix timestamp in milliseconds, in the offset/diff format. E.g.: 1234567890123,1000,1000,1000.
+   * I.e. the first absolute number and for all following numbers the difference to the previous number.
    *
    * The offset/diff format encodes the data more efficiently, as the `varint` encoding is used.
    *
@@ -222,7 +223,8 @@ message LocationRecords {
   repeated uint64 timestamp = 1;
 
   /*
-   * The coordinate-part, in the offset/diff format. E.g.: 51.012345,51.012300 => 51_012345,-45
+   * The coordinate-part, in the offset/diff format. E.g.: 51.012345,51.012300,51.012301 => 51_012345,-45,1
+   * I.e. the first absolute number and for all following numbers the difference to the previous number.
    *
    * The offset/diff format encodes the data more efficiently, as the `varint` encoding is used.
    *
@@ -234,7 +236,8 @@ message LocationRecords {
   repeated sint32 latitude = 2;
 
   /*
-   * The coordinate-part, in the offset/diff format. E.g.: 13.012300,13.012345 => 13_012300,45
+   * The coordinate-part, in the offset/diff format. E.g.: 13.012300,13.012345,13.012344 => 13_012300,45,-1
+   * I.e. the first absolute number and for all following numbers the difference to the previous number.
    *
    * The offset/diff format encodes the data more efficiently, as the `varint` encoding is used.
    *
@@ -266,6 +269,7 @@ message LocationRecords {
   message Elevation {
     /*
      * Elevation in cm above sea level, in the offset/diff format. E.g.: 480.0m, 481.0m, 480.5m => 480_00cm, 100cm, -50cm
+     * I.e. the first absolute number and for all following numbers the difference to the previous number.
      *
      * The offset/diff format encodes the data more efficiently, as the `varint` encoding is used.
      *
@@ -286,7 +290,8 @@ message LocationRecords {
   }
 
   /*
-   * Accuracy in cm (absolute value must be >= 0), in the offset/diff format. E.g.: 13.0m, 12.5m => 13_00cm, -50cm
+   * Accuracy in cm (absolute value must be >= 0), in the offset/diff format. E.g.: 13.0,12.5,12.0[m] => 13_00cm,-50cm,-50cm
+   * I.e. the first absolute number and for all following numbers the difference to the previous number.
    *
    * The offset/diff format encodes the data more efficiently, as the `varint` encoding is used.
    *
@@ -302,6 +307,7 @@ message LocationRecords {
 
   /*
    * Speed in cm/s (absolute value should be >= 0), in the offset/diff format. E.g.: 11.0m/s, 10.5m/s => 11_00 cm/s, -50cm/s
+   * I.e. the first absolute number and for all following numbers the difference to the previous number.
    * However, some platforms (Samsung?) recorded negative absolute speed values in the past. This is supported by the format.
    *
    * The offset/diff format encodes the data more efficiently, as the `varint` encoding is used.
@@ -332,6 +338,7 @@ message LocationRecords {
 message Accelerations {
   /*
    * A Unix timestamp in milliseconds, in the offset/diff format. E.g.: 1234567890123,1000,1000,1000.
+   * I.e. the first absolute number and for all following numbers the difference to the previous number.
    *
    * The offset/diff format encodes the data more efficiently, as the `varint` encoding is used.
    *
@@ -345,6 +352,7 @@ message Accelerations {
   /*
    * Acceleration value of one axis in mm/s^2, in the offset/diff format. E.g.:
    * Absolute numbers: -9, 359, -4_820 => Offset-format: -9, +368, -5_179
+   * I.e. the first absolute number and for all following numbers the difference to the previous number.
    *
    * The offset/diff format encodes the data more efficiently, as the `varint` encoding is used.
    *
@@ -358,6 +366,7 @@ message Accelerations {
   /*
    * Acceleration value of one axis in mm/s^2, in the offset/diff format. E.g.:
    * Absolute numbers: -9, 359, -4_820 => Offset-format: -9, +368, -5_179
+   * I.e. the first absolute number and for all following numbers the difference to the previous number.
    *
    * The offset/diff format encodes the data more efficiently, as the `varint` encoding is used.
    *
@@ -371,6 +380,7 @@ message Accelerations {
   /*
    * Acceleration value of one axis in mm/s^2, in the offset/diff format. E.g.:
    * Absolute numbers: -9, 359, -4_820 => Offset-format: -9, +368, -5_179
+   * I.e. the first absolute number and for all following numbers the difference to the previous number.
    *
    * The offset/diff format encodes the data more efficiently, as the `varint` encoding is used.
    *
@@ -401,6 +411,7 @@ message Accelerations {
 message Rotations {
   /*
    * A Unix timestamp in milliseconds, in the offset/diff format. E.g.: 1234567890123,1000,1000,1000.
+   * I.e. the first absolute number and for all following numbers the difference to the previous number.
    *
    * The offset/diff format encodes the data more efficiently, as the `varint` encoding is used.
    *
@@ -414,6 +425,7 @@ message Rotations {
   /*
    * Rotation value of one axis in rad/1000s, in the offset/diff format. E.g.:
    * Absolute values: 83, -51, 4.367 => Offset-format: 83, -134, 4_418
+   * I.e. the first absolute number and for all following numbers the difference to the previous number.
    *
    * The offset/diff format encodes the data more efficiently, as the `varint` encoding is used.
    *
@@ -427,6 +439,7 @@ message Rotations {
   /*
    * Rotation value of one axis in rad/1000s, in the offset/diff format. E.g.:
    * Absolute values: 83, -51, 4.367 => Offset-format: 83, -134, 4_418
+   * I.e. the first absolute number and for all following numbers the difference to the previous number.
    *
    * The offset/diff format encodes the data more efficiently, as the `varint` encoding is used.
    *
@@ -440,6 +453,7 @@ message Rotations {
   /*
    * Rotation value of one axis in rad/1000s, in the offset/diff format. E.g.:
    * Absolute values: 83, -51, 4.367 => Offset-format: 83, -134, 4_418
+   * I.e. the first absolute number and for all following numbers the difference to the previous number.
    *
    * The offset/diff format encodes the data more efficiently, as the `varint` encoding is used.
    *
@@ -468,6 +482,7 @@ message Rotations {
 message Directions {
   /*
    * A Unix timestamp in milliseconds, in the offset/diff format. E.g.: 1234567890123,1000,1000,1000.
+   * I.e. the first absolute number and for all following numbers the difference to the previous number.
    *
    * The offset/diff format encodes the data more efficiently, as the `varint` encoding is used.
    *
@@ -481,6 +496,7 @@ message Directions {
   /*
    * Direction value of one axis in µT/100, in the offset/diff format. E.g.:
    * Absolute values: 67, -141, 42 => Offset-format: 67, -208, 183
+   * I.e. the first absolute number and for all following numbers the difference to the previous number.
    *
    * The offset/diff format encodes the data more efficiently, as the `varint` encoding is used.
    *
@@ -497,6 +513,7 @@ message Directions {
   /*
    * Direction value of one axis in µT/100, in the offset/diff format. E.g.:
    * Absolute values: 67, -141, 42 => Offset-format: 67, -208, 183
+   * I.e. the first absolute number and for all following numbers the difference to the previous number.
    *
    * The offset/diff format encodes the data more efficiently, as the `varint` encoding is used.
    *
@@ -513,6 +530,7 @@ message Directions {
   /*
    * Direction value of one axis in µT/100, in the offset/diff format. E.g.:
    * Absolute values: 67, -141, 42 => Offset-format: 67, -208, 183
+   * I.e. the first absolute number and for all following numbers the difference to the previous number.
    *
    * The offset/diff format encodes the data more efficiently, as the `varint` encoding is used.
    *
