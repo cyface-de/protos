@@ -100,9 +100,10 @@ message Measurement {
 
 /*
  * This is a modified version of the message `Measurement` which allows to inject bytes from sensor data.
- * This allows the Android SDK synchronization to merge the captured sensor data without parsing it.
+ * This allows the Android and iOS SDK synchronization to merge the captured sensor data without parsing it.
+ * Sample code: github.com/cyface-de/android-backend > ProtoTest > testMergeData()
  *
- * The only change which was made is replacing the data type of the sensor data fields with `bytes`.
+ * The difference to the `Measurement` message is the data type of the sensor data fields (here: `bytes`).
  *
  * ATTENTION: Make sure this message is always compatible to the `Measurement` message!
  */
@@ -149,6 +150,13 @@ message MeasurementBytes {
  * A message type which wraps the `Accelerations` batches captured in a `cyfa` file of a measurement.
  *
  * This allows to inject the bytes from a `cyfa` file on the client without parsing the data [DAT-642].
+ *
+ * In case of creating a `cyfa` sensor data file by appending the bytes of one batch one at a time (instead of
+ * just writing all batches at once), wrap each `Accelerations` batch with `AccelerationsBinary` by itself
+ * before appending the batch to the `cyfa` binary. This is sort of counter intuitive but ensures that the `Measurement`
+ * and `MeasurementBytes` messages are compatible. For further details see DAT-642 and the internal documentation on
+ * the Confluence page about the new data format and transmission protocol in the section about the binary code.
+ * Sample code see: github.com/cyface-de/serialization > Point3DSerializer > serialize()
  */
 message AccelerationsBinary {
   /*
@@ -160,9 +168,16 @@ message AccelerationsBinary {
 }
 
 /*
- * A message type which wraps the `Accelerations` batches captured in a `cyfa` file of a measurement.
+ * A message type which wraps the `Rotations` batches captured in a `cyfr` file of a measurement.
  *
- * This allows to inject the bytes from a `cyfa` file on the client without parsing the data [DAT-642].
+ * This allows to inject the bytes from a `cyfr` file on the client without parsing the data [DAT-642].
+ *
+ * In case of creating a `cyfr` sensor data file by appending the bytes of one batch one at a time (instead of
+ * just writing all batches at once), wrap each `Rotations` batch with `RotationsBinary` by itself
+ * before appending the batch to the `cyfr` binary. This is sort of counter intuitive but ensures that the `Measurement`
+ * and `MeasurementBytes` messages are compatible. For further details see DAT-642 and the internal documentation on
+ * the Confluence page about the new data format and transmission protocol in the section about the binary code.
+ * Sample code see: github.com/cyface-de/serialization > Point3DSerializer > serialize()
  */
 message RotationsBinary {
   /*
@@ -174,9 +189,16 @@ message RotationsBinary {
 }
 
 /*
- * A message type which wraps the `Accelerations` batches captured in a `cyfa` file of a measurement.
+ * A message type which wraps the `Directions` batches captured in a `cyfd` file of a measurement.
  *
- * This allows to inject the bytes from a `cyfa` file on the client without parsing the data [DAT-642].
+ * This allows to inject the bytes from a `cyfd` file on the client without parsing the data [DAT-642].
+ *
+ * In case of creating a `cyfd` sensor data file by appending the bytes of one batch one at a time (instead of
+ * just writing all batches at once), wrap each `Directions` batch with `DirectionsBinary` by itself
+ * before appending the batch to the `cyfd` binary. This is sort of counter intuitive but ensures that the `Measurement`
+ * and `MeasurementBytes` messages are compatible. For further details see DAT-642 and the internal documentation on
+ * the Confluence page about the new data format and transmission protocol in the section about the binary code.
+ * Sample code see: github.com/cyface-de/serialization > Point3DSerializer > serialize()
  */
 message DirectionsBinary {
   /*
