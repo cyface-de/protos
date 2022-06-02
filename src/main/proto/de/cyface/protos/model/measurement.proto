@@ -241,10 +241,10 @@ message LocationRecords {
    *
    * Using `64bit` as the first timestamp is absolute and in milliseconds since 1970 and, thus, not an `integer`.
    *
-   * The value is encoded in the `uint` ProtoBuf format as we expect the timestamps to be in order (ascending).
-   * Negative numbers are supported but encoded inefficiently in `uint` this data type, compared to `sint`.
+   * The value is encoded in the `sint` ProtoBuf format to support cases where data points are collected in random order.
+   * Negative numbers are encoded more efficiently in this data type, compared to `int`.
    */
-  repeated uint64 timestamp = 1;
+  repeated sint64 timestamp = 1;
 
   /*
    * The coordinate-part, in the offset/diff format. E.g.: 51.012345,51.012300,51.012301 => 51_012345,-45,1
@@ -368,10 +368,10 @@ message Accelerations {
    *
    * Using `64bit` as the first timestamp is absolute and in milliseconds since 1970 and, thus, not an `integer`.
    *
-   * The value is encoded in the `uint` ProtoBuf format as we expect the timestamps to be in order (ascending).
-   * Negative numbers are supported but encoded inefficiently in `uint` this data type, compared to `sint`.
+   * The value is encoded in the `sint` ProtoBuf format to support cases where data points are collected in random order.
+   * Negative numbers are encoded more efficiently in this data type, compared to `int`.
    */
-  repeated uint64 timestamp = 1;
+  repeated sint64 timestamp = 1;
 
   /*
    * Acceleration value of one axis in mm/s^2, in the offset/diff format. E.g.:
@@ -441,10 +441,10 @@ message Rotations {
    *
    * Using `64bit` as the first timestamp is absolute and in milliseconds since 1970 and, thus, not an `integer`.
    *
-   * The value is encoded in the `uint` ProtoBuf format as we expect the timestamps to be in order (ascending).
-   * Negative numbers are supported but encoded inefficiently in `uint` this data type, compared to `sint`.
+   * The value is encoded in the `sint` ProtoBuf format to support cases where data points are collected in random order.
+   * Negative numbers are encoded more efficiently in this data type, compared to `int`.
    */
-  repeated uint64 timestamp = 1;
+  repeated sint64 timestamp = 1;
 
   /*
    * Rotation value of one axis in rad/1000s, in the offset/diff format. E.g.:
@@ -512,10 +512,10 @@ message Directions {
    *
    * Using `64bit` as the first timestamp is absolute and in milliseconds since 1970 and, thus, not an `integer`.
    *
-   * The value is encoded in the `uint` ProtoBuf format as we expect the timestamps to be in order (ascending).
-   * Negative numbers are supported but encoded inefficiently in `uint` this data type, compared to `sint`.
+   * The value is encoded in the `sint` ProtoBuf format to support cases where data points are collected in random order.
+   * Negative numbers are encoded more efficiently in this data type, compared to `int`.
    */
-  repeated uint64 timestamp = 1;
+  repeated sint64 timestamp = 1;
 
   /*
    * Direction value of one axis in µT/100, in the offset/diff format. E.g.:
