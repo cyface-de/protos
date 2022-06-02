@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Cyface GmbH - All Rights Reserved
+ * Copyright (C) 2021-2022 Cyface GmbH - All Rights Reserved
  *
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
@@ -34,19 +34,17 @@ option java_multiple_files = true;
  * - The following fields are not repeating: formatVersion, locationsRecords, accelerations/r./d., capturingLog
  * - The following fields are expected less than 10 Hz: events, images, videos
  *
- * author Armin Schnabel
- * Version 1.0.0
+ * @author Armin Schnabel
+ * @version 2.0.0
+ * @since 1.0.0
  */
 message Measurement {
   /*
    * The API version of this `Measurement` message format. Messages with the same API-version are compatible.
    *
-   * Using `32bit` as we expect the version to be and within the range of an `integer`.
+   * Using `uint32` as this is the smallest number type in Protobuf and we support versions to be between 0 and 2^32.
    *
-   * The value is encoded in the `uint` ProtoBuf format as we expect the version to be positive.
-   * Negative numbers are supported but encoded inefficiently in `uint` this data type, compared to `sint`.
-   *
-   * The current format API version is `2`.
+   * The current format API version is `3`.
    */
   uint32 format_version = 16;
 
@@ -109,7 +107,11 @@ message Measurement {
  */
 message MeasurementBytes {
   /*
-   * The current format of the binary format version is `2`
+   * The API version of this `Measurement` message format. Messages with the same API-version are compatible.
+   *
+   * Using `uint32` as this is the smallest number type in Protobuf and we expect the version to be between 0 and 2^32.
+   *
+   * The current format API version is `3`.
    */
   uint32 format_version = 16;
   /*
