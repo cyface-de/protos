@@ -42,7 +42,7 @@ message Measurement {
   /*
    * The API version of this `Measurement` message format. Messages with the same API-version are compatible.
    *
-   * Using `uint32` as this is the smallest number type in Protobuf and we support versions to be between 0 and 2^32.
+   * Using `uint32` as this is the smallest number type in Protobuf and we expect the versions to be between 0 and 2^32.
    *
    * The current format API version is `3`.
    */
@@ -116,6 +116,8 @@ message MeasurementBytes {
   uint32 format_version = 16;
   /*
    * Collection of geo-locations.
+   *
+   * We use a packed encoding here, so this is a non repeated field.
    */
   LocationRecords location_records = 17;
   /*
@@ -132,18 +134,27 @@ message MeasurementBytes {
   bytes directions_binary = 20;
   /*
    * Collection of events.
+   *
+   * We use `repeated` as we don't expect as many events as e.g. sensor points.
+   * If we decide to store high-frequent events later on we can use a field number < 16 which only requires 1 Byte.
    */
   repeated Event events = 21;
   /*
-   * The image files are usually of FileType `JPG` (compressed) or `DNG` (raw).
+   * The image files, optionally collected during a measurement. Usually FileType `JPG` (compressed) or `DNG` (raw).
+   *
+   * We expect a similar image rates of 1 Hz or less, so a 2-Byte field number was chosen.
+   *
+   * The image size is kilo- or megabytes and, thus, field number encoding size is only a small fraction so `repeated` was chosen.
    */
   repeated File images = 22;
   /*
-   * The video files are usually of FileType `MP4`.
+   * The video files, optionally collected during a measurement. Usually FileType `MP4`.
+   *
+   * When a measurement is paused and resumed, multiple video files are collected per measurement - thus, `repeated`.
    */
   repeated File videos = 23;
   /*
-   * This field allows to attach this file which is usually a of FileType `CSV`.
+   * Log file which is optionally captured during images capturing. Usually FileType `CSV`.
    */
   File capturing_log = 24;
 }
@@ -153,7 +164,7 @@ message MeasurementBytes {
  *
  * This allows to inject the bytes from a `cyfa` file on the client without parsing the data [DAT-642].
  *
- * In case of creating a `cyfa` sensor data file by appending the bytes of one batch one at a time (instead of
+ * In case of creating a `cyfa` sensor data file by appending the bytes of one batch at a time (instead of
  * just writing all batches at once), wrap each `Accelerations` batch with `AccelerationsBinary` by itself
  * before appending the batch to the `cyfa` binary. This is sort of counter intuitive but ensures that the `Measurement`
  * and `MeasurementBytes` messages are compatible. For further details see DAT-642 and the internal documentation on
@@ -174,7 +185,7 @@ message AccelerationsBinary {
  *
  * This allows to inject the bytes from a `cyfr` file on the client without parsing the data [DAT-642].
  *
- * In case of creating a `cyfr` sensor data file by appending the bytes of one batch one at a time (instead of
+ * In case of creating a `cyfr` sensor data file by appending the bytes of one batch at a time (instead of
  * just writing all batches at once), wrap each `Rotations` batch with `RotationsBinary` by itself
  * before appending the batch to the `cyfr` binary. This is sort of counter intuitive but ensures that the `Measurement`
  * and `MeasurementBytes` messages are compatible. For further details see DAT-642 and the internal documentation on
@@ -195,7 +206,7 @@ message RotationsBinary {
  *
  * This allows to inject the bytes from a `cyfd` file on the client without parsing the data [DAT-642].
  *
- * In case of creating a `cyfd` sensor data file by appending the bytes of one batch one at a time (instead of
+ * In case of creating a `cyfd` sensor data file by appending the bytes of one batch at a time (instead of
  * just writing all batches at once), wrap each `Directions` batch with `DirectionsBinary` by itself
  * before appending the batch to the `cyfd` binary. This is sort of counter intuitive but ensures that the `Measurement`
  * and `MeasurementBytes` messages are compatible. For further details see DAT-642 and the internal documentation on
@@ -255,7 +266,7 @@ message LocationRecords {
    * Using `32bit` as the maximum value is the diff between -180 and +180 which is: 360_000_000 and within `integer` range.
    *
    * The value is encoded in the `sint` ProtoBuf format as the latitude can as likely decrease as increase (diff-format).
-   * Negative numbers are encoded more efficiently in this data type, compared to `uint`.
+   * Negative numbers are encoded more efficiently in this data type, compared to `int`.
    */
   repeated sint32 latitude = 2;
 
@@ -268,7 +279,7 @@ message LocationRecords {
    * Using `32bit` as the maximum value is the diff between -90 and +90 which is: 180_000_000 and within `integer` range.
    *
    * The value is encoded in the `sint` ProtoBuf format as the longitude can as likely decrease as increase (diff-format).
-   * Negative numbers are encoded more efficiently in this data type, compared to `uint`.
+   * Negative numbers are encoded more efficiently in this data type, compared to `int`.
    */
   repeated sint32 longitude = 3;
 
@@ -301,7 +312,7 @@ message LocationRecords {
      * and the dead sea is ~ [8848m;-414m] so we should be good when teleporting between dry and comfy places on earth for a while.
      *
      * The value is encoded in the `sint` ProtoBuf format as the longitude can as likely decrease as increase (diff-format).
-     * Negative numbers are encoded more efficiently in this data type, compared to `uint`.
+     * Negative numbers are encoded more efficiently in this data type, compared to `int`.
      */
     sint32 value = 1;
 
@@ -322,7 +333,7 @@ message LocationRecords {
    * Using `32bit` i.e. we support a diff value up to ~2*10^9 cm which is ~ 20.000 km.
    *
    * The value is encoded in the `sint` ProtoBuf format as the longitude can as likely decrease as increase (diff-format).
-   * Negative numbers are encoded more efficiently in this data type, compared to `uint`.
+   * Negative numbers are encoded more efficiently in this data type, compared to `int`.
    *
    * The likelihood of that accuracy to be correct is not stored as not all platforms provide this or provide this in different format.
    * For some platform this is static, i.e. we can retrieve this information from the osVersion/osType field.
@@ -340,7 +351,7 @@ message LocationRecords {
    * As we capture the speed relative to the earth's rotation, we should be covering all manned aircraft, but not spacecrafts.
    *
    * The value is encoded in the `sint` ProtoBuf format as the longitude can as likely decrease as increase (diff-format).
-   * Negative numbers are encoded more efficiently in this data type, compared to `uint`.
+   * Negative numbers are encoded more efficiently in this data type, compared to `int`.
    */
   repeated sint32 speed = 6;
 }
@@ -586,8 +597,7 @@ message Event {
    *
    * Using `64bit` as the timestamp is absolute and in milliseconds since 1970 and, thus, not in the `integer` range.
    *
-   * The value is encoded in the `uint` ProtoBuf format as we don't expect negative timestamps.
-   * Negative numbers are supported but encoded inefficiently in `uint` this data type, compared to `sint`.
+   * The value is encoded in the `uint` ProtoBuf format as we don't expect (and support) negative absolute timestamps.
    */
   uint64 timestamp = 1;
 
@@ -658,8 +668,7 @@ message File {
    *
    * Using `64bit` as the timestamp is absolute and in milliseconds since 1970 and, thus, not in the `integer` range.
    *
-   * The value is encoded in the `uint` ProtoBuf format as we don't expect negative timestamps.
-   * Negative numbers are supported but encoded inefficiently in `uint` this data type, compared to `sint`.
+   * The value is encoded in the `uint` ProtoBuf format as we don't expect (and support) negative absolute timestamps.
    */
   uint64 timestamp = 16;
 

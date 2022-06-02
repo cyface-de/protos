@@ -3,14 +3,14 @@
 This repository defines the Cyface Models as schemas such as Protocol Buffer Schemas.
 This allows to de-/serialize the Cyface Binary Data from in different programming languages.
 
-For more details on Protocol Buffers (short: Protobuf) check out it's link:https://developers.google.com/protocol-buffers[documentation].
+For more details on Protocol Buffers (short: Protobuf) check out its link:https://developers.google.com/protocol-buffers[documentation].
 
 
 == Message Format Definitions
 
 This is a collection of `.proto` files describe the data structure of the Cyface Models.
 
-- This allows Protobuf to automatically de-/encode the the data from/to binary files.
+- This allows Protobuf to automatically de-/encode the data from/to binary files.
 - Supports later extensions of the format with backward-compatibility
 - Following the link:https://developers.google.com/protocol-buffers/docs/style[Style Guide]
 
@@ -30,7 +30,7 @@ Reminders from the documentation which need to be considered for future updates:
 
  - link:https://developers.google.com/protocol-buffers/docs/proto3#default[Default values]
 
- - Scalar message fields, once parsed, cannot tell if a field was not set or set the the default value afterwards.
+ - Scalar message fields, once parsed, cannot tell if a field was not set or set the default value afterwards.
  - Default values are not serialized on the wire.
  - Keep this in mind when defining e.g. booleans, make sure you want that "default" `false` behavior on.
  
@@ -47,7 +47,7 @@ Other message types:
 
 Generates serializer, deserializer, etc. in a chosen language, e.g. `.java` files for Java.
 
-Java classes can be compiled with link:https://developers.google.com/protocol-buffers/docs/javatutorial#compiling-your-protocol-buffers[protoc] (Protocol Buffers `v3.17.0`):
+Java classes can be compiled with link:https://developers.google.com/protocol-buffers/docs/javatutorial#compiling-your-protocol-buffers[protoc] (Protocol Buffers, version: see `protobufVersion` in `build.gradle`):
 
   protoc --java_out=./src/main/java/ src/main/protos/de/cyface/protos/model/measurement.proto
 
@@ -62,13 +62,13 @@ However, the pre-compiled `JARs` are also published to the link:https://github.c
 
 Or you can download the `proto` link:protoc --java_out=./src/main/java/ src/main/protos/de/cyface/protos/model/measurement.proto[files] from this repository and then generate the classes using the link:https://github.com/google/protobuf-gradle-plugin[Gradle Plugin]. This is done in the link:https://github.com/cyface-de/android-backend[Cyface Android SDK] - check it out if you need an example.
 
-The serializers encode the data in an efficient way, the decision process is documented link:https://cyface.atlassian.net/wiki/spaces/IM/pages/1535148033/Datenformat+bertragungsprotokoll+2021[internally].
+The serializers encode the data in an efficient way, the decision process is documented link:https://cyface.atlassian.net/wiki/spaces/IM/pages/1535148033/Datenformat+bertragungsprotokoll+API+V3[internally].
 
 
 == Using the generated Code
 
 ____
-Protocol Buffers and Object Oriented Design Protocol buffer classes are basically dumb data holders (like structs in C); they don't make good first class citizens in an object model. If you want to add richer behavior to a generated class, the best way to do this is to wrap the generated protocol buffer class in an application-specific class.
+Protocol Buffers and Object-Oriented Design Protocol buffer classes are basically dumb data holders (like structs in C); they don't make good first class citizens in an object model. If you want to add richer behavior to a generated class, the best way to do this is to wrap the generated protocol buffer class in an application-specific class.
 ____
 link:https://developers.google.com/protocol-buffers/docs/javatutorial#builders[Source]
 
@@ -76,6 +76,6 @@ link:https://developers.google.com/protocol-buffers/docs/javatutorial#builders[S
 [#_licensing]
 == Licensing
 
-Copyright (C) 2021 Cyface GmbH - All Rights Reserved
+Copyright (C) 2021-2022 Cyface GmbH - All Rights Reserved
 Unauthorized copying of this file, via any medium is strictly prohibited
 Proprietary and confidential
