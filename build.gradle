@@ -1,26 +1,26 @@
 /*
- * Copyright 2021 Cyface GmbH
+ * Copyright 2021-2022 Cyface GmbH
  *
- * This file is part of the Cyface Protocol Buffer Messages.
+ * This file is part of the Cyface Protobuf Messages.
  *
- *  The Cyface Protocol Buffer Messages is free software: you can redistribute it and/or modify
+ *  The Cyface Protobuf Messages is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
- *  The Cyface Protocol Buffer Messages is distributed in the hope that it will be useful,
+ *  The Cyface Protobuf Messages is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with the Cyface Protocol Buffer Messages.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with the Cyface Protobuf Messages.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
  * The root build gradle file.
  *
  * @author Armin Schnabel
- * @version 1.0.0
+ * @version 1.0.1
  * @since 1.0.0
  */
 buildscript {
@@ -35,12 +35,12 @@ plugins {
   id 'idea'
   id 'maven-publish'
   //noinspection SpellCheckingInspection
-  id 'com.github.johnrengelman.shadow' version '6.1.0'
-  id 'com.google.protobuf' version '0.8.16'
+  id 'com.github.johnrengelman.shadow' version '7.1.2'
+  id 'com.google.protobuf' version '0.8.18'
 }
 
 group = 'de.cyface'
-version = '1.0.0'
+version = '2.0.0'
 
 tasks.withType(JavaCompile) {
   options.encoding = 'UTF-8'
@@ -51,14 +51,13 @@ tasks.withType(JavaCompile) {
 
 ext {
   commonsLangVersion = '3.12.0'
-  gradleWrapperVersion = '6.8.3'
-  protobufVersion = '3.17.0'
+  gradleWrapperVersion = '7.4.2'
+  protobufVersion = '3.21.1'
 
   // Versions of testing dependencies
-  junitVersion = '5.7.0'
-  mockitoVersion = '3.3.3'
+  junitVersion = '5.8.2'
+  mockitoVersion = '4.6.0'
   hamcrestVersion = '2.2'
-  flapdoodleVersion = '3.0.0'
 }
 
 wrapper {
