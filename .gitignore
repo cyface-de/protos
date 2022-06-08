@@ -56,3 +56,6 @@ gradle.properties
 
 # Vertx Config files
 **/config.json
+
+# Temporary Mac Files
+**/.DS_Store
