@@ -40,7 +40,7 @@ plugins {
 }
 
 group = 'de.cyface'
-version = '2.0.0'
+version = rootProject.file('VERSION').text.trim()
 
 tasks.withType(JavaCompile) {
   options.encoding = 'UTF-8'
