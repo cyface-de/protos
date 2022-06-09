@@ -5,6 +5,12 @@
 #  To learn more about Podspec attributes see https://guides.cocoapods.org/syntax/podspec.html
 #  To see working Podspecs in the CocoaPods repo see https://github.com/CocoaPods/Specs/
 #
+load_version = Proc.new do
+  file = File.open("VERSION")
+  version = file.read
+  file.close
+  version
+end
 
 Pod::Spec.new do |spec|
 
@@ -16,7 +22,7 @@ Pod::Spec.new do |spec|
   #
 
   spec.name         = "Protos"
-  spec.version      = "1.0.0"
+  spec.version      = load_version.call
   spec.summary      = "The protocol buffer specification to create the Cyface binary format"
 
   # This description is used to generate tags and improve search results.
