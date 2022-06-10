@@ -45,7 +45,9 @@ Other message types:
 
 == Compiling the Message Definitions
 
-Generates serializer, deserializer, etc. in a chosen language, e.g. `.java` files for Java.
+Generates serializer, deserializer, etc. in a chosen language, e.g. `.java` files for Java, or `.swift` files for Swift.
+
+### Java
 
 Java classes can be compiled with link:https://developers.google.com/protocol-buffers/docs/javatutorial#compiling-your-protocol-buffers[protoc] (Protocol Buffers, version: see `protobufVersion` in `build.gradle`):
 
@@ -64,6 +66,16 @@ Or you can download the `proto` link:protoc --java_out=./src/main/java/ src/main
 
 The serializers encode the data in an efficient way, the decision process is documented link:https://cyface.atlassian.net/wiki/spaces/IM/pages/1535148033/Datenformat+bertragungsprotokoll+API+V3[internally].
 
+### Swift
+Swift classes may be generated using link:https://github.com/apple/swift-protobuf[Swift Protobuf] from Apple.
+
+You can include the `.proto` file with your Swift project from the Cyface custom Pod repository: `https://github.com/cyface-de/ios-podspecs.git` using CocoaPods:
+
+```
+pod 'Protos', '~> 2.1.0'
+```
+
+Using a custom Pods repository is explained on the link:https://guides.cocoapods.org/making/private-cocoapods.html[CocoaPods Website].
 
 == Using the generated Code
 
