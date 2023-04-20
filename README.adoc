@@ -72,7 +72,7 @@ Swift classes may be generated using link:https://github.com/apple/swift-protobu
 You can include the `.proto` file with your Swift project from the Cyface custom Pod repository: `https://github.com/cyface-de/ios-podspecs.git` using CocoaPods:
 
 ```
-pod 'Protos', '~> 2.1.0'
+pod 'Protos', '~> 0.0.0'
 ```
 
 Using a custom Pods repository is explained on the link:https://guides.cocoapods.org/making/private-cocoapods.html[CocoaPods Website].
@@ -88,7 +88,7 @@ link:https://developers.google.com/protocol-buffers/docs/javatutorial#builders[S
 [#_licensing]
 == Licensing
 
-Copyright 2021-2022 Cyface GmbH
+Copyright 2021-2023 Cyface GmbH
 
 This file is part of the Cyface Protobuf Messages.
 
