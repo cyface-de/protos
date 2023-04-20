@@ -51,7 +51,7 @@ tasks.withType(JavaCompile) {
 
 ext {
   commonsLangVersion = '3.12.0'
-  gradleWrapperVersion = '7.4.2'
+  gradleWrapperVersion = '7.6.1'
   protobufVersion = '3.22.2'
 
   // Versions of testing dependencies
