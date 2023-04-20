@@ -28,7 +28,7 @@ jobs:
       - name: Set version
         run: |
           sed -i "s/0.0.0/${{ github.ref_name }}/g" VERSION
-          sed -i "s/pod 'Protos', '~> 0.0.0'/pod 'Protos', '~> 1.2.3'/g" README.adoc
+          sed -i "s/pod 'Protos', '~> 0.0.0'/pod 'Protos', '~> ${{ github.ref_name }}'/g" README.adoc
 
       # Publish slim JARS to Github Package Registry
       - name: Publish package
