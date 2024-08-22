@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 Cyface GmbH
+ * Copyright 2021-2024 Cyface GmbH
  *
  * This file is part of the Cyface Protobuf Messages.
  *
@@ -103,7 +103,7 @@ message Measurement {
    */
   repeated File videos = 23;
   /*
-   * Log file which is optionally captured during images capturing. Usually FileType `CSV`.
+   * Log file which is optionally captured during images capturing. Usually FileType `ZIP`.
    */
   File capturing_log = 24;
 }
@@ -723,5 +723,13 @@ message File {
      * Log file used e.g. to protocol the image capturing rates on Android.
      */
     CSV = 4;
+    /*
+     * Log file used e.g. to store the image annotations on Android.
+     */
+    JSON = 5;
+    /*
+     * Compressed file used e.g. to upload all log files captured on Android as a single `capturing_log` file.
+     */
+    ZIP = 6;
   }
 }
