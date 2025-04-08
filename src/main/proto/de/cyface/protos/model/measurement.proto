@@ -724,12 +724,16 @@ message File {
      */
     CSV = 4;
     /*
-     * Log file used e.g. to store the image annotations on Android.
+     * Log file used e.g. to store the image annotations on Android when capturing finished.
      */
     JSON = 5;
     /*
      * Compressed file used e.g. to upload all log files captured on Android as a single `capturing_log` file.
      */
     ZIP = 6;
+    /*
+     * Appendable JSON log file used e.g. to store image annotations on Android while capturing may continue.
+     */
+    JSONL = 7;
   }
 }
