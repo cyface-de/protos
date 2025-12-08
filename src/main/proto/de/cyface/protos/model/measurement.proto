@@ -309,14 +309,17 @@ message LocationRecords {
    * The elevation. If existent, the `value` field must be set. If not, the `is_null` field must be set to true.
    *
    * The encoding should look like the following:
-   * - E 1 48000 E 1 100 E 1 -50 (scenario where all locations have elevations)
-   * - E 1 48000 E 2 1   E 1 100 (scenario where some locations have elevations)
+   * - E 1 48000 E 1 100 E 1 -50 E 1 50 (scenario where all locations have elevations)
+   * - E 1 48000 E 2 1   E 1 48050 E 1 50 (scenario where some locations have elevations, see STAD-827)
    * - 0 bytes                   (scenario without elevations)
    */
   message Elevation {
     /*
      * Elevation in cm above sea level, in the offset/diff format. E.g.: 480.0m, 481.0m, 480.5m => 480_00cm, 100cm, -50cm
      * I.e. the first absolute number and for all following numbers the difference to the previous number.
+     *
+     * If some elevations are missing, start with an absolute number again [STAD-827], e.g:
+     * 480.0m, null, 481.0m, 480.5m => 480_00cm, null, 481_00cm, -50cm
      *
      * The offset/diff format encodes the data more efficiently, as the `varint` encoding is used.
      *
