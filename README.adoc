@@ -47,11 +47,11 @@ Other message types:
 
 Generates serializer, deserializer, etc. in a chosen language, e.g. `.java` files for Java, or `.swift` files for Swift.
 
-### Java
+=== Java
 
 Java classes can be compiled with link:https://developers.google.com/protocol-buffers/docs/javatutorial#compiling-your-protocol-buffers[protoc] (Protocol Buffers, version: see `protobufVersion` in `build.gradle`):
 
-  protoc --java_out=./src/main/java/ src/main/protos/de/cyface/protos/model/measurement.proto
+  protoc --java_out=./src/main/java/ src/main/proto/de/cyface/protos/model/measurement.proto
 
 However, the pre-compiled `JARs` are also published to the link:https://github.com/orgs/cyface-de/packages?repo_name=protos[Github Package Registry].
 
@@ -60,22 +60,49 @@ However, the pre-compiled `JARs` are also published to the link:https://github.c
 
     Instead of using the pre-compiled `java` classes (published `JAR`s) it's recommended to use `javalite` for Android. These classes can either be manually generated with:
 
-    protoc --java_out=lite:./src/main/java/ src/main/protos/de/cyface/protos/model/measurement.proto
+    protoc --java_out=lite:./src/main/java/ src/main/proto/de/cyface/protos/model/measurement.proto
 
-Or you can download the `proto` link:protoc --java_out=./src/main/java/ src/main/protos/de/cyface/protos/model/measurement.proto[files] from this repository and then generate the classes using the link:https://github.com/google/protobuf-gradle-plugin[Gradle Plugin]. This is done in the link:https://github.com/cyface-de/android-backend[Cyface Android SDK] - check it out if you need an example.
+Or you can download the `proto` link:src/main/proto/de/cyface/protos/model/measurement.proto[files] from this repository and then generate the classes using the link:https://github.com/google/protobuf-gradle-plugin[Gradle Plugin]. This is done in the link:https://github.com/cyface-de/android-backend[Cyface Android SDK] - check it out if you need an example.
 
 The serializers encode the data in an efficient way, the decision process is documented link:https://cyface.atlassian.net/wiki/spaces/IM/pages/1535148033/Datenformat+bertragungsprotokoll+API+V3[internally].
 
-### Swift
+=== Swift
 Swift classes may be generated using link:https://github.com/apple/swift-protobuf[Swift Protobuf] from Apple.
 
-You can include the `.proto` file with your Swift project from the Cyface custom Pod repository: `https://github.com/cyface-de/ios-podspecs.git` using CocoaPods:
+The link:https://github.com/cyface-de/ios-sensor-library[Cyface iOS SDK] contains the generated `measurement.pb.swift`. Generate it again after a change of the `.proto` file.
 
-```
-pod 'Protos', '~> 0.0.0'
-```
+== Design Decisions
 
-Using a custom Pods repository is explained on the link:https://guides.cocoapods.org/making/private-cocoapods.html[CocoaPods Website].
+- *Proto3 syntax:* there are no `required` fields. Default values are not serialized, and a scalar field cannot tell "not set" from "set to the default value".
+- *Field numbers 1-15 are reserved* in `Measurement` for future high-frequency fields, because these numbers are encoded in 1 byte instead of 2. All current fields start at 16. The `reserved` keyword is not used.
+- *Offset/diff encoding:* `LocationRecords`, `Accelerations`, `Rotations` and `Directions` store the first value as an absolute number and all following values as the difference to the previous value. This keeps the `varint` encoding small.
+- *`Measurement` vs. `MeasurementBytes`:* `Measurement` contains the parsed sensor data as nested messages. `MeasurementBytes` contains the sensor batches as raw `bytes`, so that the SDKs can merge the captured data without parsing it.
+- *Null elevations:* an elevation is a nested message with an `is_null` flag, because a proto3 scalar cannot be null.
+- *Units:* coordinates are scaled by 10^6 (for example `51.012345` -> `51_012345`), elevation and accuracy are in cm, speed in cm/s, accelerations in mm/s^2. The comments in the `.proto` file document the unit of each field.
+
+== Development
+
+Java 11, Gradle 7.6.1, Protobuf 3.22.2 (`protobufVersion` in `build.gradle`). The Protobuf Gradle Plugin generates the Java classes from the `.proto` file during the build. Tests: JUnit 5, Hamcrest, Mockito.
+
+  ./gradlew clean build      # generate the Java classes, build and run the tests
+  ./gradlew test             # run all tests
+  ./gradlew publish          # publish to GitHub Packages (credentials in gradle.properties or USERNAME/PASSWORD)
+
+The version is in the file `VERSION`. It is `0.0.0` in the repository; the CI sets it from the tag.
+
+== GitHub Workflows
+
+- `gradle_build.yml` builds and tests each push and pull request to `main` and `release-*`. Pull requests from forks are skipped.
+- `gradle_publish.yml` runs on version tags: it publishes the JARs to GitHub Packages and creates the GitHub release.
+
+Rules of the workflows (hardening of CY-6748): do not use `${{ github.ref_name }}` or other event values directly in a `run:` script, pass them through `env:`; pass secrets through `env:` of the step that needs them; use `runs-on: ubuntu-26.04`, not `ubuntu-latest`.
+
+The organization-wide cleanup in `cyface-de/production` (`.github/workflows/registry_cleanup.yml`) deletes old package versions.
+
+== Release a new Version
+
+- Create an annotated tag with a semantic version (for example `2.3.1`) on `main` and push it. The body of the tag message becomes the release notes.
+- A tag with a suffix (for example `2.3.1-beta1`) becomes a pre-release.
 
 == Using the generated Code
 
@@ -88,7 +115,7 @@ link:https://developers.google.com/protocol-buffers/docs/javatutorial#builders[S
 [#_licensing]
 == Licensing
 
-Copyright 2021-2023 Cyface GmbH
+Copyright 2021-2026 Cyface GmbH
 
 This file is part of the Cyface Protobuf Messages.
 
