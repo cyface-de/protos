@@ -35,7 +35,7 @@ plugins {
   id 'idea'
   id 'maven-publish'
   //noinspection SpellCheckingInspection
-  id 'com.github.johnrengelman.shadow' version '7.1.2'
+  id 'com.gradleup.shadow' version '8.3.11'
   id 'com.google.protobuf' version '0.9.6'
 }
 
@@ -51,7 +51,7 @@ tasks.withType(JavaCompile) {
 
 ext {
   commonsLangVersion = '3.21.0'
-  gradleWrapperVersion = '7.6.6'
+  gradleWrapperVersion = '8.14.6'
   protobufVersion = '3.25.9'
 
   // Versions of testing dependencies
